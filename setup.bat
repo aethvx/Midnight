@@ -44,7 +44,7 @@ if errorlevel 1 goto :error
 if not exist .env copy .env.example .env
 echo.
 echo Installation complete.
-echo Fill API_ID and API_HASH in .env, then run discover_ids.bat.
+echo Run configure.bat, then run discover_ids.bat.
 pause
 exit /b 0
 

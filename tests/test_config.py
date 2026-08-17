@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from phone_bot.config import load_config
+from phone_bot.config import PROJECT_DIR, load_config
 
 
 def test_load_config(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
@@ -22,8 +22,8 @@ def test_load_config(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     assert config.group_id == -100123
     assert config.topic_id == 45
     assert config.requester_id == 777
-    assert config.database_path == Path("custom.db")
-    assert config.session_path == Path("custom_session")
+    assert config.database_path == PROJECT_DIR / "custom.db"
+    assert config.session_path == PROJECT_DIR / "custom_session"
 
 
 def test_api_hash_is_required(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:

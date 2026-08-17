@@ -17,13 +17,17 @@ def choose(items: list[Any], prompt: str) -> Any:
 
 
 async def main() -> None:
-    load_dotenv()
+    project_dir = Path(__file__).resolve().parent
+    env_path = project_dir / ".env"
+    load_dotenv(env_path)
     raw_api_id = os.getenv("API_ID", "").strip()
     api_hash = os.getenv("API_HASH", "").strip()
     if not raw_api_id or not api_hash or "replace_with" in api_hash:
-        raise ValueError("Сначала укажи новые API_ID и API_HASH в файле .env")
+        raise ValueError(
+            f"API_ID или API_HASH не найдены в {env_path}. Запусти configure.bat"
+        )
 
-    session_path = Path(os.getenv("SESSION_PATH", "data/user"))
+    session_path = project_dir / os.getenv("SESSION_PATH", "data/user")
     session_path.parent.mkdir(parents=True, exist_ok=True)
     client = TelegramClient(str(session_path), int(raw_api_id), api_hash)
     await client.start()
@@ -87,9 +91,9 @@ async def main() -> None:
 
     save = input("\nЗаписать их в .env автоматически? [Y/n]: ").strip().casefold()
     if save not in {"n", "no", "нет"}:
-        set_key(".env", "GROUP_ID", str(selected_group.id), quote_mode="never")
-        set_key(".env", "TOPIC_ID", str(selected_topic.id), quote_mode="never")
-        set_key(".env", "REQUESTER_ID", str(requester_id), quote_mode="never")
+        set_key(env_path, "GROUP_ID", str(selected_group.id), quote_mode="never")
+        set_key(env_path, "TOPIC_ID", str(selected_topic.id), quote_mode="never")
+        set_key(env_path, "REQUESTER_ID", str(requester_id), quote_mode="never")
         print("Значения сохранены в .env.")
 
     await client.disconnect()

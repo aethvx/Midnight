@@ -16,12 +16,12 @@
 1. Установи именно [Python 3.12 (64-bit)](https://www.python.org/downloads/release/python-31210/). **Python Launcher** лучше включить, но новый установщик также найдёт стандартную установку без него.
 2. Распакуй проект, например, в `C:\Users\wofll\Projects\telegram-phone-userbot`.
 3. Запусти `setup.bat`. Он создаст окружение и файл `.env`.
-4. Открой `.env` в Блокноте и укажи **новые** `API_ID` и `API_HASH` из раздела Apps на `my.telegram.org`. Не присылай их разработчикам.
+4. Запусти `configure.bat` и введи **новые** `API_ID` и `API_HASH` из раздела Apps на `my.telegram.org`. При вводе `API_HASH` символы специально не показываются. Настройки сохранятся в `.env` именно текущей папки.
 
 Пока оставь остальные ID пустыми:
 
 ```env
-API_ID=12345678
+API_ID=
 API_HASH=твой_новый_api_hash
 GROUP_ID=
 TOPIC_ID=

@@ -149,8 +149,9 @@ class QueueManager:
 
 
 def main() -> None:
-    load_dotenv()
-    database = Database(Path(os.getenv("DATABASE_PATH", "data/phones.db")))
+    project_dir = Path(__file__).resolve().parent
+    load_dotenv(project_dir / ".env")
+    database = Database(project_dir / os.getenv("DATABASE_PATH", "data/phones.db"))
     database.initialize()
     root = tk.Tk()
     QueueManager(root, database)
