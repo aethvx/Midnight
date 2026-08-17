@@ -1,10 +1,10 @@
 @echo off
-chcp 65001 >nul
 cd /d "%~dp0"
-if not exist .venv\Scripts\python.exe (
-    echo Сначала запусти setup.bat.
-    pause
-    exit /b 1
-)
+if exist .venv\Scripts\python.exe goto run
+echo Run setup.bat first.
+pause
+exit /b 1
+
+:run
 .venv\Scripts\python.exe discover_ids.py
 if errorlevel 1 pause

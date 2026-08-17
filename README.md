@@ -13,7 +13,7 @@
 
 ## 1. Установка на Windows
 
-1. Установи именно [Python 3.12 (64-bit)](https://www.python.org/downloads/release/python-31210/). При установке включи **Python Launcher**.
+1. Установи именно [Python 3.12 (64-bit)](https://www.python.org/downloads/release/python-31210/). **Python Launcher** лучше включить, но новый установщик также найдёт стандартную установку без него.
 2. Распакуй проект, например, в `C:\Users\wofll\Projects\telegram-phone-userbot`.
 3. Запусти `setup.bat`. Он создаст окружение и файл `.env`.
 4. Открой `.env` в Блокноте и укажи **новые** `API_ID` и `API_HASH` из раздела Apps на `my.telegram.org`. Не присылай их разработчикам.
