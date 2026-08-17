@@ -17,9 +17,9 @@
 
 ## 2. Установка на Windows
 
-1. Установи [Python 3.11 или новее](https://www.python.org/downloads/). При установке включи **Add Python to PATH**.
+1. Установи именно [Python 3.12 (64-bit)](https://www.python.org/downloads/release/python-31210/). При установке обязательно включи **Python Launcher**. Python 3.14 для закреплённых версий библиотек не подходит.
 2. Распакуй проект в `C:\Users\wofll\Projects\whatsapp-phone-bot`.
-3. Дважды нажми `setup.bat`.
+3. Дважды нажми `setup.bat`. Скрипт сам выберет Python 3.12 и пересоздаст `.venv`, даже если на ПК также установлена другая версия Python.
 4. Открой созданный файл `.env` и вставь токен после `BOT_TOKEN=`.
 
 ## 3. Получение Telegram ID
@@ -54,7 +54,7 @@ DATABASE_PATH=data/phones.db
 ## Проверка для разработчика
 
 ```powershell
-py -3 -m venv .venv
+py -3.12 -m venv .venv
 .venv\Scripts\pip install -r requirements-dev.txt
 .venv\Scripts\python -m pytest
 ```
