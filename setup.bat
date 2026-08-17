@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 cd /d "%~dp0"
 py -3.12 --version >nul 2>&1
 if errorlevel 1 (
@@ -14,11 +15,11 @@ py -3.12 -m venv .venv
 if errorlevel 1 goto :error
 call .venv\Scripts\activate.bat
 python -m pip install --upgrade pip
-pip install --only-binary=:all: -r requirements.txt
+pip install -r requirements.txt
 if errorlevel 1 goto :error
 if not exist .env copy .env.example .env
 echo.
-echo Installation complete. Fill in the .env file, then run start.bat.
+echo Установка завершена. Заполни API_ID и API_HASH в .env, затем запусти discover_ids.bat.
 pause
 exit /b 0
 

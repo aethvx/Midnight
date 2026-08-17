@@ -1,35 +1,36 @@
 import asyncio
 import os
+from pathlib import Path
 
-from aiogram import Bot, Dispatcher
-from aiogram.types import Message
 from dotenv import load_dotenv
+from telethon import TelegramClient, events
+
+from phone_bot.userbot import message_topic_id
 
 
 async def main() -> None:
     load_dotenv()
-    token = os.getenv("BOT_TOKEN", "").strip()
-    if not token or "replace_with" in token:
-        raise ValueError("Сначала укажи BOT_TOKEN в файле .env")
+    raw_api_id = os.getenv("API_ID", "").strip()
+    api_hash = os.getenv("API_HASH", "").strip()
+    if not raw_api_id or not api_hash or "replace_with" in api_hash:
+        raise ValueError("Сначала укажи новые API_ID и API_HASH в файле .env")
 
-    bot = Bot(token)
-    dispatcher = Dispatcher()
+    session_path = Path(os.getenv("SESSION_PATH", "data/user"))
+    session_path.parent.mkdir(parents=True, exist_ok=True)
+    client = TelegramClient(str(session_path), int(raw_api_id), api_hash)
 
-    @dispatcher.message()
-    async def show_ids(message: Message) -> None:
+    @client.on(events.NewMessage())
+    async def show_ids(event: events.NewMessage.Event) -> None:
         print("\nПолучено сообщение:")
-        print(f"GROUP_ID={message.chat.id}")
-        print(f"TOPIC_ID={message.message_thread_id or 0}")
-        print(f"REQUESTER_ID={message.from_user.id if message.from_user else 0}")
+        print(f"GROUP_ID={event.chat_id}")
+        print(f"TOPIC_ID={message_topic_id(event.message) or 0}")
+        print(f"REQUESTER_ID={event.sender_id}")
         print("Остановить поиск: Ctrl+C\n")
 
-    try:
-        print("Отправь любое сообщение от нужного человека в нужной теме.")
-        print("Остановить поиск: Ctrl+C")
-        await bot.delete_webhook(drop_pending_updates=True)
-        await dispatcher.start_polling(bot)
-    finally:
-        await bot.session.close()
+    await client.start()
+    print("Отправь сообщение от нужного человека в нужной теме.")
+    print("Остановить поиск: Ctrl+C")
+    await client.run_until_disconnected()
 
 
 if __name__ == "__main__":

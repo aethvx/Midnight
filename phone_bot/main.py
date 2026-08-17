@@ -1,10 +1,10 @@
 import logging
 
-from aiogram import Bot, Dispatcher
+from telethon import TelegramClient, events
 
 from phone_bot.config import load_config
 from phone_bot.database import Database
-from phone_bot.handlers import build_router
+from phone_bot.userbot import is_matching_request
 
 
 async def main() -> None:
@@ -14,15 +14,30 @@ async def main() -> None:
     )
     config = load_config()
     database = Database(config.database_path)
-    await database.connect()
+    database.initialize()
+    config.session_path.parent.mkdir(parents=True, exist_ok=True)
 
-    bot = Bot(token=config.bot_token)
-    dispatcher = Dispatcher()
-    dispatcher.include_router(build_router(config, database))
+    client = TelegramClient(str(config.session_path), config.api_id, config.api_hash)
 
-    try:
-        await bot.delete_webhook(drop_pending_updates=True)
-        await dispatcher.start_polling(bot)
-    finally:
-        await database.close()
-        await bot.session.close()
+    @client.on(events.NewMessage(incoming=True))
+    async def handle_request(event: events.NewMessage.Event) -> None:
+        if not is_matching_request(event, config):
+            return
+
+        issued = database.issue_next(
+            requester_id=event.sender_id,
+            chat_id=event.chat_id,
+            topic_id=config.topic_id,
+        )
+        text = issued.phone if issued else "Номеров нет"
+        try:
+            await client.send_message(event.chat_id, text, reply_to=event.message.id)
+        except Exception:
+            if issued is not None:
+                database.return_to_front(issued)
+            raise
+
+    await client.start()
+    me = await client.get_me()
+    logging.info("Userbot started as %s (%s)", me.username or me.first_name, me.id)
+    await client.run_until_disconnected()

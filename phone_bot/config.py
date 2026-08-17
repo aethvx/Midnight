@@ -7,12 +7,13 @@ from dotenv import load_dotenv
 
 @dataclass(frozen=True)
 class Config:
-    bot_token: str
+    api_id: int
+    api_hash: str
     group_id: int
     topic_id: int
     requester_id: int
-    admin_ids: frozenset[int]
     database_path: Path
+    session_path: Path
 
 
 def _required_int(name: str) -> int:
@@ -29,32 +30,16 @@ def _required_int(name: str) -> int:
 def load_config() -> Config:
     load_dotenv()
 
-    bot_token = os.getenv("BOT_TOKEN", "").strip()
-    if not bot_token:
-        raise ValueError("Не заполнена переменная BOT_TOKEN в файле .env")
-
-    requester_id = _required_int("REQUESTER_ID")
-    raw_admin_ids = os.getenv("ADMIN_IDS", "").strip()
-    try:
-        admin_ids = (
-            frozenset(
-                int(value.strip())
-                for value in raw_admin_ids.split(",")
-                if value.strip()
-            )
-            if raw_admin_ids
-            else frozenset({requester_id})
-        )
-    except ValueError as error:
-        raise ValueError(
-            "ADMIN_IDS должен содержать Telegram ID через запятую"
-        ) from error
+    api_hash = os.getenv("API_HASH", "").strip()
+    if not api_hash or "replace_with" in api_hash:
+        raise ValueError("Не заполнена переменная API_HASH в файле .env")
 
     return Config(
-        bot_token=bot_token,
+        api_id=_required_int("API_ID"),
+        api_hash=api_hash,
         group_id=_required_int("GROUP_ID"),
         topic_id=_required_int("TOPIC_ID"),
-        requester_id=requester_id,
-        admin_ids=admin_ids,
+        requester_id=_required_int("REQUESTER_ID"),
         database_path=Path(os.getenv("DATABASE_PATH", "data/phones.db")),
+        session_path=Path(os.getenv("SESSION_PATH", "data/user")),
     )

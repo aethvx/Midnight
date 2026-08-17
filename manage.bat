@@ -6,5 +6,6 @@ if not exist .venv\Scripts\python.exe (
     pause
     exit /b 1
 )
-.venv\Scripts\python.exe discover_ids.py
+.venv\Scripts\python.exe manage.py
 if errorlevel 1 pause
+

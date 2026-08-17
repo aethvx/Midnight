@@ -7,31 +7,28 @@ from phone_bot.config import load_config
 
 def test_load_config(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setenv("BOT_TOKEN", "token")
+    monkeypatch.setenv("API_ID", "12345")
+    monkeypatch.setenv("API_HASH", "secret_hash")
     monkeypatch.setenv("GROUP_ID", "-100123")
     monkeypatch.setenv("TOPIC_ID", "45")
     monkeypatch.setenv("REQUESTER_ID", "777")
-    monkeypatch.setenv("ADMIN_IDS", "777, 888")
     monkeypatch.setenv("DATABASE_PATH", "custom.db")
+    monkeypatch.setenv("SESSION_PATH", "custom_session")
 
     config = load_config()
 
-    assert config.bot_token == "token"
+    assert config.api_id == 12345
+    assert config.api_hash == "secret_hash"
     assert config.group_id == -100123
     assert config.topic_id == 45
     assert config.requester_id == 777
-    assert config.admin_ids == frozenset({777, 888})
     assert config.database_path == Path("custom.db")
+    assert config.session_path == Path("custom_session")
 
 
-def test_requester_is_default_admin(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-) -> None:
+def test_api_hash_is_required(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setenv("BOT_TOKEN", "token")
-    monkeypatch.setenv("GROUP_ID", "-100123")
-    monkeypatch.setenv("TOPIC_ID", "45")
-    monkeypatch.setenv("REQUESTER_ID", "777")
-    monkeypatch.delenv("ADMIN_IDS", raising=False)
+    monkeypatch.setenv("API_HASH", "replace_with_new_api_hash")
 
-    assert load_config().admin_ids == frozenset({777})
+    with pytest.raises(ValueError, match="API_HASH"):
+        load_config()
