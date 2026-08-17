@@ -38,8 +38,8 @@ if exist .venv rmdir /s /q .venv
 "%PYTHON_EXE%" %PYTHON_ARGS% -m venv .venv
 if errorlevel 1 goto :error
 call .venv\Scripts\activate.bat
-python -m pip install --upgrade pip
-pip install -r requirements.txt
+python -m pip install --no-cache-dir --upgrade pip
+python -m pip install --no-cache-dir -r requirements.txt
 if errorlevel 1 goto :error
 if not exist .env copy .env.example .env
 echo.
