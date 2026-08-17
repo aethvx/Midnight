@@ -22,6 +22,7 @@ def make_event(
     chat_id: int = -100500,
     sender_id: int = 777,
     topic_id: int = 42,
+    outgoing: bool = False,
 ):
     reply_to = SimpleNamespace(reply_to_top_id=topic_id, reply_to_msg_id=topic_id)
     message = SimpleNamespace(reply_to=reply_to)
@@ -30,6 +31,7 @@ def make_event(
         chat_id=chat_id,
         sender_id=sender_id,
         message=message,
+        out=outgoing,
     )
 
 
@@ -53,3 +55,9 @@ def test_only_exact_authorized_request_matches() -> None:
     assert not is_matching_request(make_event(chat_id=-100999), config)
     assert not is_matching_request(make_event(sender_id=888), config)
     assert not is_matching_request(make_event(topic_id=43), config)
+
+
+def test_own_outgoing_request_matches_when_own_id_is_authorized() -> None:
+    config = make_config()
+
+    assert is_matching_request(make_event(sender_id=777, outgoing=True), config)

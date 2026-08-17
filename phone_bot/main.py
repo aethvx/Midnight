@@ -19,7 +19,7 @@ async def main() -> None:
 
     client = TelegramClient(str(config.session_path), config.api_id, config.api_hash)
 
-    @client.on(events.NewMessage(incoming=True))
+    @client.on(events.NewMessage())
     async def handle_request(event: events.NewMessage.Event) -> None:
         if not is_matching_request(event, config):
             return
